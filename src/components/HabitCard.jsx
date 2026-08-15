@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useAnimate, useReducedMotion } from "framer-motion";
 import { Check, Flame, X } from "lucide-react";
-import { currentStreak, streakLabel, streakTier } from "@/lib/habits";
+import { currentStreak, streakLabel } from "@/lib/habits";
+import { habitColor } from "@/lib/colors";
 import { StreakGrid } from "@/components/StreakGrid";
-
-const FLAME_TIER_CLASS = {
-  0: "text-ember-off",
-  1: "text-primary",
-  2: "text-ember-hot",
-};
 
 export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
   const streak = currentStreak(habit.completedDates);
-  const tier = streakTier(streak);
+  const color = habitColor(habit);
   const [pulseKey, setPulseKey] = useState(0);
   const [flameScope, animateFlame] = useAnimate();
   const reducedMotion = useReducedMotion();
@@ -40,85 +35,67 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
           onOpen(habit.id);
         }
       }}
-      className="flex flex-col h-full bg-card border-2 border-border rounded-sm shadow-[4px_4px_0_0_var(--border)] p-4 cursor-pointer"
+      className="flex flex-col h-full bg-card border-2 border-border rounded-sm shadow-[4px_4px_0_0_var(--border)] p-3.5 cursor-pointer"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xl leading-none">{habit.emoji}</span>
-          <span className="font-display font-bold text-[17px] truncate">{habit.name}</span>
+      <div className="flex items-center gap-3">
+        <div
+          className="w-11 h-11 rounded-full flex items-center justify-center text-xl shrink-0"
+          style={{ backgroundColor: color }}
+        >
+          {habit.emoji}
         </div>
-        <button
-          type="button"
-          aria-label="excluir hábito"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (confirm(`Excluir "${habit.name}"? Isso apaga todo o histórico.`)) {
-              onRemove(habit.id);
-            }
-          }}
-          className="text-muted-foreground hover:text-destructive text-xl leading-none px-1.5"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
 
-      <div className="flex items-stretch gap-3 mt-3">
-        <button
-          type="button"
-          onClick={handleToggle}
-          className={`flex items-center gap-2 border-2 rounded-sm px-3.5 py-2 font-bold text-[13px] uppercase tracking-wide transition-colors duration-250 ${
-            done
-              ? "bg-ember-hot border-ember-hot text-primary-foreground"
-              : "bg-transparent border-border text-foreground"
-          }`}
-        >
-          <span
-            className={`relative w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-250 ${
-              done ? "bg-primary-foreground border-primary-foreground" : "border-border"
-            }`}
-          >
-            <AnimatePresence>
-              {done && (
-                <motion.span
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={reducedMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Check className="w-2.5 h-2.5 text-ember-hot" strokeWidth={3} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </span>
-          {done ? "feito hoje" : "hoje"}
-        </button>
-
-        <div className="ml-auto flex flex-col items-end justify-center text-right">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <Flame
-              ref={flameScope}
-              className={`shrink-0 ${FLAME_TIER_CLASS[tier]}`}
-              width={tier === 2 ? 27 : 22}
-              height={tier === 2 ? 27 : 22}
-              fill="currentColor"
-            />
-            <span
-              className={`font-display font-bold text-[40px] leading-none ${
-                tier === 0 ? "text-muted-foreground" : tier === 2 ? "text-ember-hot" : "text-primary"
-              }`}
+            <span className="font-display font-bold text-[16px] truncate">{habit.name}</span>
+            <button
+              type="button"
+              aria-label="excluir hábito"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (confirm(`Excluir "${habit.name}"? Isso apaga todo o histórico.`)) {
+                  onRemove(habit.id);
+                }
+              }}
+              className="ml-auto text-muted-foreground hover:text-destructive leading-none p-1 shrink-0"
             >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex items-center gap-1 mt-0.5">
+            <Flame ref={flameScope} width={15} height={15} style={{ color }} className="shrink-0" fill="currentColor" />
+            <span className="font-mono font-bold text-sm" style={{ color }}>
               {streak}
             </span>
+            <span className="text-xs text-muted-foreground">{streakLabel(streak)}</span>
           </div>
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
-            {streakLabel(streak)}
-          </span>
         </div>
+
+        <button
+          type="button"
+          aria-label={done ? "marcado como feito hoje" : "marcar como feito hoje"}
+          onClick={handleToggle}
+          style={done ? { backgroundColor: color, borderColor: color } : undefined}
+          className="relative w-11 h-11 rounded-full border-2 border-border flex items-center justify-center shrink-0 transition-colors duration-250"
+        >
+          <AnimatePresence>
+            {done && (
+              <motion.span
+                className="absolute inset-0 flex items-center justify-center"
+                initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={reducedMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Check className="w-5 h-5 text-primary-foreground" strokeWidth={3} />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </button>
       </div>
 
-      <div className="mt-auto pt-3.5 overflow-hidden">
-        <StreakGrid completedDates={habit.completedDates} weeks={9} cellSize={11} pulseKey={pulseKey} />
+      <div className="mt-auto pt-3 overflow-hidden">
+        <StreakGrid completedDates={habit.completedDates} weeks={9} cellSize={11} pulseKey={pulseKey} color={color} />
       </div>
     </article>
   );

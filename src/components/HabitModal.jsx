@@ -2,11 +2,14 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { StreakGrid } from "@/components/StreakGrid";
 import { bestStreak, currentStreak } from "@/lib/habits";
+import { habitColor } from "@/lib/colors";
 
-function Stat({ value, label }) {
+function Stat({ value, label, color }) {
   return (
     <div className="flex-1 border-2 border-border rounded-sm bg-background text-center py-2.5 px-2">
-      <span className="block font-mono font-bold text-[22px] text-primary">{value}</span>
+      <span className="block font-mono font-bold text-[22px]" style={{ color }}>
+        {value}
+      </span>
       <span className="text-[9px] uppercase tracking-wide text-muted-foreground">{label}</span>
     </div>
   );
@@ -15,6 +18,8 @@ function Stat({ value, label }) {
 export function HabitModal({ habit, open, onOpenChange }) {
   const reducedMotion = useReducedMotion();
   if (!habit) return null;
+
+  const color = habitColor(habit);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -35,13 +40,13 @@ export function HabitModal({ habit, open, onOpenChange }) {
           transition={{ duration: 0.25, ease: "easeOut" }}
         >
           <div className="flex gap-2.5 px-4">
-            <Stat value={currentStreak(habit.completedDates)} label="streak atual" />
-            <Stat value={bestStreak(habit.completedDates)} label="melhor streak" />
-            <Stat value={habit.completedDates.length} label="total de dias" />
+            <Stat value={currentStreak(habit.completedDates)} label="streak atual" color={color} />
+            <Stat value={bestStreak(habit.completedDates)} label="melhor streak" color={color} />
+            <Stat value={habit.completedDates.length} label="total de dias" color={color} />
           </div>
 
           <div className="px-4 pb-4 pt-4 overflow-x-auto">
-            <StreakGrid completedDates={habit.completedDates} weeks={26} cellSize={15} />
+            <StreakGrid completedDates={habit.completedDates} weeks={26} cellSize={15} color={color} />
           </div>
         </motion.div>
       </SheetContent>

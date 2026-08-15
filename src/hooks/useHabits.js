@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { loadHabits, saveHabits } from "@/lib/storage";
 import { todayKey, uid } from "@/lib/habits";
+import { DEFAULT_HABIT_COLOR } from "@/lib/colors";
 
 export function useHabits() {
   const [habits, setHabits] = useState(loadHabits);
@@ -9,11 +10,12 @@ export function useHabits() {
     saveHabits(habits);
   }, [habits]);
 
-  function addHabit(name, emoji) {
+  function addHabit(name, emoji, color = DEFAULT_HABIT_COLOR) {
     const habit = {
       id: uid(),
       name: name.trim(),
       emoji: emoji.trim() || "🔥",
+      color,
       createdAt: todayKey(),
       completedDates: [],
     };

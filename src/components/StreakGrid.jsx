@@ -1,21 +1,25 @@
 import { useEffect, useRef } from "react";
 import { useAnimate, useReducedMotion } from "framer-motion";
 import { buildGridDays } from "@/lib/calendar";
+import { DEFAULT_HABIT_COLOR } from "@/lib/colors";
 
-const LEVEL_CLASS = {
-  0: "bg-ember-off",
-  1: "bg-primary",
-  2: "bg-ember-hot",
-};
-
-// level 2 (7+ day streak) glows a little — reinforces the "brasa crescendo" idea
-const GLOW_STYLE = { boxShadow: "0 0 4px 0 color-mix(in srgb, var(--ember-hot) 45%, transparent)" };
+function cellStyle(level, cellSize, color) {
+  if (level === 0) return { width: cellSize, height: cellSize };
+  if (level === 1) return { width: cellSize, height: cellSize, backgroundColor: color };
+  // level 2 (7+ day streak): same color, but glowing — the "brasa crescendo" idea
+  return {
+    width: cellSize,
+    height: cellSize,
+    backgroundColor: color,
+    boxShadow: `0 0 4px 0 color-mix(in srgb, ${color} 55%, transparent)`,
+  };
+}
 
 /**
  * pulseKey: bump this (e.g. a counter) right after the user marks a habit
  * done, and today's cell flashes once. Leave at 0 to render statically.
  */
-export function StreakGrid({ completedDates, weeks, cellSize = 11, pulseKey = 0 }) {
+export function StreakGrid({ completedDates, weeks, cellSize = 11, pulseKey = 0, color = DEFAULT_HABIT_COLOR }) {
   const days = buildGridDays(completedDates, weeks);
   const [scope, animate] = useAnimate();
   const prevPulseKey = useRef(pulseKey);
@@ -46,8 +50,8 @@ export function StreakGrid({ completedDates, weeks, cellSize = 11, pulseKey = 0 
             key={day.date}
             title={day.date}
             data-today={day.isToday || undefined}
-            style={{ width: cellSize, height: cellSize, ...(day.level === 2 ? GLOW_STYLE : null) }}
-            className={`rounded-sm ${LEVEL_CLASS[day.level]} ${
+            style={cellStyle(day.level, cellSize, color)}
+            className={`rounded-sm ${day.level === 0 ? "bg-ember-off" : ""} ${
               day.isToday ? "ring-2 ring-foreground ring-inset" : ""
             }`}
           />
