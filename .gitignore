@@ -1,0 +1,15 @@
+# dependencies (none currently, kept in case tooling is added later)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor / tooling files
+.vscode/
+.idea/
+.claude/
+*.swp
+
+# logs
+*.log

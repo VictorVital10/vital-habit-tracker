@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Ember — Habit Tracker</title>
+
+<!-- PWA -->
+<meta name="theme-color" content="#1B1712">
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS install support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ember">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2c1 3-2 4-2 7a2 2 0 0 0 4 0c1 1 2 2.5 2 4.5A6 6 0 0 1 4 13.5C4 8 9 6 12 2z"/>
+    </svg>
+    <span class="brand__name">ember</span>
+  </div>
+  <button id="addHabitBtn" class="btn btn--accent" type="button" aria-haspopup="dialog">
+    <span aria-hidden="true">+</span> hábito
+  </button>
+</header>
+
+<main id="habitList" class="habit-list" aria-live="polite">
+  <!-- habit cards injected here -->
+</main>
+
+<template id="emptyStateTemplate">
+  <div class="empty-state">
+    <svg class="empty-state__mark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2c1 3-2 4-2 7a2 2 0 0 0 4 0c1 1 2 2.5 2 4.5A6 6 0 0 1 4 13.5C4 8 9 6 12 2z"/>
+    </svg>
+    <p class="empty-state__title">nenhuma chama acesa ainda</p>
+    <p class="empty-state__hint">toque em “+ hábito” para acender a primeira</p>
+  </div>
+</template>
+
+<template id="habitCardTemplate">
+  <article class="habit-card" tabindex="0">
+    <div class="habit-card__row">
+      <div class="habit-card__id">
+        <span class="habit-card__emoji" aria-hidden="true"></span>
+        <span class="habit-card__name"></span>
+      </div>
+      <button class="habit-card__delete" type="button" aria-label="excluir hábito">×</button>
+    </div>
+
+    <div class="habit-card__row habit-card__row--main">
+      <button class="today-toggle" type="button">
+        <span class="today-toggle__check" aria-hidden="true"></span>
+        <span class="today-toggle__label">hoje</span>
+      </button>
+
+      <div class="streak-display">
+        <div class="streak-display__top">
+          <svg class="streak-flame" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2c1 3-2 4-2 7a2 2 0 0 0 4 0c1 1 2 2.5 2 4.5A6 6 0 0 1 4 13.5C4 8 9 6 12 2z"/>
+          </svg>
+          <span class="streak-display__num">0</span>
+        </div>
+        <span class="streak-display__label">dias seguidos</span>
+      </div>
+    </div>
+
+    <div class="habit-card__grid-wrap">
+      <div class="habit-grid habit-grid--mini"></div>
+    </div>
+  </article>
+</template>
+
+<!-- Add habit bottom sheet -->
+<div id="sheetOverlay" class="sheet-overlay" hidden></div>
+<div id="addSheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="sheet__handle"></div>
+  <h2 id="sheetTitle" class="sheet__title">novo hábito</h2>
+  <form id="addHabitForm" class="sheet__form">
+    <div class="field-row">
+      <label for="habitEmoji" class="field-label">emoji</label>
+      <input id="habitEmoji" class="emoji-input" type="text" maxlength="8" placeholder="🔥" autocomplete="off">
+    </div>
+    <div class="field-row field-row--grow">
+      <label for="habitName" class="field-label">nome</label>
+      <input id="habitName" class="name-input" type="text" placeholder="beber água" required maxlength="40" autocomplete="off">
+    </div>
+    <div class="sheet__actions">
+      <button type="button" id="cancelAddBtn" class="btn btn--ghost">cancelar</button>
+      <button type="submit" class="btn btn--accent">acender</button>
+    </div>
+  </form>
+</div>
+
+<!-- Full history modal -->
+<div id="historyOverlay" class="sheet-overlay" hidden></div>
+<div id="historySheet" class="sheet sheet--tall" role="dialog" aria-modal="true" aria-labelledby="historyTitle" hidden>
+  <div class="sheet__handle"></div>
+  <div class="sheet__header-row">
+    <h2 id="historyTitle" class="sheet__title"></h2>
+    <button id="closeHistoryBtn" class="btn btn--ghost btn--icon" type="button" aria-label="fechar">×</button>
+  </div>
+  <div class="history-stats">
+    <div class="history-stat">
+      <span id="historyStreak" class="history-stat__num">0</span>
+      <span class="history-stat__label">streak atual</span>
+    </div>
+    <div class="history-stat">
+      <span id="historyBest" class="history-stat__num">0</span>
+      <span class="history-stat__label">melhor streak</span>
+    </div>
+    <div class="history-stat">
+      <span id="historyTotal" class="history-stat__num">0</span>
+      <span class="history-stat__label">total de dias</span>
+    </div>
+  </div>
+  <div class="habit-grid-scroll">
+    <div id="historyGrid" class="habit-grid habit-grid--full"></div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
