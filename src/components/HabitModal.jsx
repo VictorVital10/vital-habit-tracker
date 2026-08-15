@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { StreakGrid } from "@/components/StreakGrid";
 import { bestStreak, currentStreak } from "@/lib/habits";
@@ -12,6 +13,7 @@ function Stat({ value, label }) {
 }
 
 export function HabitModal({ habit, open, onOpenChange }) {
+  const reducedMotion = useReducedMotion();
   if (!habit) return null;
 
   return (
@@ -26,15 +28,22 @@ export function HabitModal({ habit, open, onOpenChange }) {
           </SheetTitle>
         </SheetHeader>
 
-        <div className="flex gap-2.5 px-4">
-          <Stat value={currentStreak(habit.completedDates)} label="streak atual" />
-          <Stat value={bestStreak(habit.completedDates)} label="melhor streak" />
-          <Stat value={habit.completedDates.length} label="total de dias" />
-        </div>
+        <motion.div
+          key={habit.id}
+          initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        >
+          <div className="flex gap-2.5 px-4">
+            <Stat value={currentStreak(habit.completedDates)} label="streak atual" />
+            <Stat value={bestStreak(habit.completedDates)} label="melhor streak" />
+            <Stat value={habit.completedDates.length} label="total de dias" />
+          </div>
 
-        <div className="px-4 pb-4 pt-4 overflow-x-auto">
-          <StreakGrid completedDates={habit.completedDates} weeks={26} cellSize={15} />
-        </div>
+          <div className="px-4 pb-4 pt-4 overflow-x-auto">
+            <StreakGrid completedDates={habit.completedDates} weeks={26} cellSize={15} />
+          </div>
+        </motion.div>
       </SheetContent>
     </Sheet>
   );

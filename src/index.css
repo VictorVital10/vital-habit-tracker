@@ -135,3 +135,16 @@ body {
     @apply border-border outline-ring/50;
   }
 }
+
+/* Framer Motion animations are gated in JS via useReducedMotion(); this
+   covers the CSS-driven ones (Radix/tw-animate-css sheet transitions,
+   plain Tailwind transition-colors, etc). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

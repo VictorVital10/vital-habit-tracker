@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { AnimatePresence, motion, useAnimate, useReducedMotion } from "framer-motion";
 import { Check, Flame, X } from "lucide-react";
 import { currentStreak, streakLabel, streakTier } from "@/lib/habits";
 import { StreakGrid } from "@/components/StreakGrid";
@@ -11,6 +13,21 @@ const FLAME_TIER_CLASS = {
 export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
   const streak = currentStreak(habit.completedDates);
   const tier = streakTier(streak);
+  const [pulseKey, setPulseKey] = useState(0);
+  const [flameScope, animateFlame] = useAnimate();
+  const reducedMotion = useReducedMotion();
+
+  function handleToggle(e) {
+    e.stopPropagation();
+    const justMarkedDone = !done;
+    onToggleToday(habit.id);
+    if (justMarkedDone) {
+      setPulseKey((k) => k + 1);
+      if (!reducedMotion) {
+        animateFlame(flameScope.current, { scale: [1, 1.35, 1] }, { duration: 0.5, ease: "easeOut" });
+      }
+    }
+  }
 
   return (
     <article
@@ -48,22 +65,31 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
       <div className="flex items-stretch gap-3 mt-3">
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleToday(habit.id);
-          }}
-          className={`flex items-center gap-2 border-2 rounded-sm px-3.5 py-2 font-bold text-[13px] uppercase tracking-wide transition-colors ${
+          onClick={handleToggle}
+          className={`flex items-center gap-2 border-2 rounded-sm px-3.5 py-2 font-bold text-[13px] uppercase tracking-wide transition-colors duration-250 ${
             done
               ? "bg-ember-hot border-ember-hot text-primary-foreground"
               : "bg-transparent border-border text-foreground"
           }`}
         >
           <span
-            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+            className={`relative w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-250 ${
               done ? "bg-primary-foreground border-primary-foreground" : "border-border"
             }`}
           >
-            {done && <Check className="w-2.5 h-2.5 text-ember-hot" strokeWidth={3} />}
+            <AnimatePresence>
+              {done && (
+                <motion.span
+                  className="absolute inset-0 flex items-center justify-center"
+                  initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={reducedMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Check className="w-2.5 h-2.5 text-ember-hot" strokeWidth={3} />
+                </motion.span>
+              )}
+            </AnimatePresence>
           </span>
           {done ? "feito hoje" : "hoje"}
         </button>
@@ -71,6 +97,7 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
         <div className="ml-auto flex flex-col items-end justify-center text-right">
           <div className="flex items-center gap-1.5">
             <Flame
+              ref={flameScope}
               className={`shrink-0 ${FLAME_TIER_CLASS[tier]}`}
               width={tier === 2 ? 27 : 22}
               height={tier === 2 ? 27 : 22}
@@ -91,7 +118,7 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
       </div>
 
       <div className="mt-auto pt-3.5 overflow-hidden">
-        <StreakGrid completedDates={habit.completedDates} weeks={9} cellSize={11} />
+        <StreakGrid completedDates={habit.completedDates} weeks={9} cellSize={11} pulseKey={pulseKey} />
       </div>
     </article>
   );
