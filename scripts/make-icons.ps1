@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Drawing
 
 $root = Split-Path -Parent $PSScriptRoot
-$iconsDir = Join-Path $root "icons"
+$iconsDir = Join-Path $root "public\icons"
 
 $bgColor    = [System.Drawing.Color]::FromArgb(255, 0x1B, 0x17, 0x12)
 $outerColor = [System.Drawing.Color]::FromArgb(255, 0xE4, 0x57, 0x2E)

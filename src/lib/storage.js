@@ -1,3 +1,5 @@
+// Same localStorage key/shape as the vanilla build, so existing habits
+// aren't lost when switching to the React version.
 const STORAGE_KEY = "ember.habits.v1";
 
 export function loadHabits() {

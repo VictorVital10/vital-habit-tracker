@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Dark mode follows the OS setting only — no manual toggle in this app. */
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+/* ==========================================================================
+   EMBER — design tokens.
+   shadcn's semantic slots (background, foreground, primary, card, border...)
+   are remapped to the Ember "papel quente / brasa" palette below, so every
+   shadcn primitive (Button, Dialog, ...) is Ember-themed out of the box.
+   Two extra tokens (ember-off / ember-hot) cover the streak-grid and
+   flame-icon "brasa" scale, which has no shadcn equivalent.
+   ========================================================================== */
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Ember-only tokens, outside shadcn's semantic vocabulary */
+  --color-ember-off: var(--ember-off);
+  --color-ember-hot: var(--ember-hot);
+  --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+:root {
+  --radius: 2px; /* sharp, neobrutalist corners — not shadcn's default 10px */
+
+  --background: #f5efe6;
+  --foreground: #241c15;
+  --card: #fffaf2;
+  --card-foreground: #241c15;
+  --popover: #fffaf2;
+  --popover-foreground: #241c15;
+  --primary: #e4572e;
+  --primary-foreground: #fffaf2;
+  --secondary: #e7ddcc;
+  --secondary-foreground: #241c15;
+  --muted: #efe6d8;
+  --muted-foreground: #6b5f4f;
+  --accent: #efe6d8;
+  --accent-foreground: #241c15;
+  --destructive: #b3261e;
+  --border: #241c15;
+  --input: #241c15;
+  --ring: #e4572e;
+
+  --ember-off: #e7ddcc;
+  --ember-hot: #ff5a1f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1b1712;
+    --foreground: #f3e9da;
+    --card: #241f18;
+    --card-foreground: #f3e9da;
+    --popover: #241f18;
+    --popover-foreground: #f3e9da;
+    --primary: #e4572e;
+    --primary-foreground: #1b1712;
+    --secondary: #33291d;
+    --secondary-foreground: #f3e9da;
+    --muted: #2a2420;
+    --muted-foreground: #b6a992;
+    --accent: #33291d;
+    --accent-foreground: #f3e9da;
+    --destructive: #b3261e;
+    --border: #f3e9da;
+    --input: #f3e9da;
+    --ring: #e4572e;
+
+    --ember-off: #2a2420;
+    --ember-hot: #ff8c42;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}

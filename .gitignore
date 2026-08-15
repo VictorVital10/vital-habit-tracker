@@ -1,5 +1,10 @@
-# dependencies (none currently, kept in case tooling is added later)
+# dependencies
 node_modules/
+
+# build output
+dist/
+dist-ssr/
+*.local
 
 # OS files
 .DS_Store

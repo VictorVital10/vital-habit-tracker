@@ -1,9 +1,8 @@
-import { addDays, todayKey } from "./habits.js";
+import { addDays, todayKey } from "@/lib/habits";
 
 /**
  * Builds a day-by-day grid (like GitHub's contribution graph) ending today.
- * Weeks run as columns, Sun-Sat as rows, so the DOM order is column-major —
- * matches the CSS grid-auto-flow:column layout.
+ * Weeks run as columns, Sun-Sat as rows, matching a grid-flow-col layout.
  *
  * "Level" has 3 states: 0 = not done, 1 = done, 2 = done as part of a
  * streak of 7+ consecutive days ("incandescent" — see levelForRun).
@@ -38,22 +37,4 @@ export function buildGridDays(completedDates, weeks = 13) {
 
 function levelForRun(runLength) {
   return runLength >= 7 ? 2 : 1;
-}
-
-export function renderGrid(container, days) {
-  container.innerHTML = "";
-  const frag = document.createDocumentFragment();
-  for (const day of days) {
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    if (day.isFuture) {
-      cell.style.visibility = "hidden";
-    } else {
-      cell.dataset.level = String(day.level);
-      cell.title = day.date;
-      if (day.isToday) cell.classList.add("is-today");
-    }
-    frag.appendChild(cell);
-  }
-  container.appendChild(frag);
 }
