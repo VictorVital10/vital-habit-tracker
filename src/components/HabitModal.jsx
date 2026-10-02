@@ -6,11 +6,11 @@ import { habitColor } from "@/lib/colors";
 
 function Stat({ value, label, color }) {
   return (
-    <div className="flex-1 border-2 border-border rounded-sm bg-background text-center py-2.5 px-2">
-      <span className="block font-mono font-bold text-[22px]" style={{ color }}>
+    <div className="flex-1 bg-teal-glass border border-teal-line rounded-[12px] text-center py-4 px-2">
+      <span className="num block font-display font-semibold text-[28px] leading-none mb-1.5" style={{ color }}>
         {value}
       </span>
-      <span className="text-[9px] uppercase tracking-wide text-muted-foreground">{label}</span>
+      <span className="block text-[11px] font-semibold uppercase tracking-[.12em] text-t3 leading-tight">{label}</span>
     </div>
   );
 }
@@ -25,10 +25,10 @@ export function HabitModal({ habit, open, onOpenChange }) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="border-t-2 border-border rounded-t-2xl max-h-[85dvh] overflow-y-auto"
+        className="border-t border-teal-line rounded-t-[20px] bg-deep max-h-[85dvh] overflow-y-auto"
       >
         <SheetHeader>
-          <SheetTitle className="font-display text-xl">
+          <SheetTitle className="font-display text-2xl font-semibold tracking-[-.5px]">
             {habit.emoji} {habit.name}
           </SheetTitle>
         </SheetHeader>

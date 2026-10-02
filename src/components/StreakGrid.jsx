@@ -51,7 +51,7 @@ export function StreakGrid({ completedDates, weeks, cellSize = 11, pulseKey = 0,
             title={day.date}
             data-today={day.isToday || undefined}
             style={cellStyle(day.level, cellSize, color)}
-            className={`rounded-sm ${day.level === 0 ? "bg-ember-off" : ""} ${
+            className={`rounded-[3px] ${day.level === 0 ? "bg-cell-off" : ""} ${
               day.isToday ? "ring-2 ring-foreground ring-inset" : ""
             }`}
           />

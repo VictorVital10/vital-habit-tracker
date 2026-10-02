@@ -1,5 +1,7 @@
 // Same localStorage key/shape as the vanilla build, so existing habits
 // aren't lost when switching to the React version.
+// Key keeps the app's original name (Ember) on purpose: renaming it would
+// orphan every habit already saved on users' devices.
 const STORAGE_KEY = "ember.habits.v1";
 
 export function loadHabits() {

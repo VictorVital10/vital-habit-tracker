@@ -35,19 +35,26 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
           onOpen(habit.id);
         }
       }}
-      className="flex flex-col h-full bg-card border-2 border-border rounded-sm shadow-[4px_4px_0_0_var(--border)] p-3.5 cursor-pointer"
+      className="group flex flex-col h-full bg-glass border border-line rounded-[16px] p-5 cursor-pointer transition-[translate,background-color,border-color,box-shadow] duration-250 hover:bg-teal/8 hover:border-teal-line hover:shadow-[0_12px_32px_rgba(0,0,0,.25)] motion-safe:hover:-translate-y-[3px]"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-[18px]">
+        {/* icon tile tinted with the habit color, like the pitch's .mk-icon;
+            lights up on card hover */}
         <div
-          className="w-11 h-11 rounded-full flex items-center justify-center text-xl shrink-0"
-          style={{ backgroundColor: color }}
+          className="w-12 h-12 rounded-[12px] border flex items-center justify-center text-[22px] shrink-0 transition-[scale,box-shadow] duration-250 motion-safe:group-hover:scale-106 group-hover:shadow-[0_0_0_4px_var(--glow-soft),0_6px_22px_var(--glow)]"
+          style={{
+            backgroundColor: `color-mix(in srgb, ${color} 18%, transparent)`,
+            borderColor: `color-mix(in srgb, ${color} 32%, transparent)`,
+            "--glow": `color-mix(in srgb, ${color} 32%, transparent)`,
+            "--glow-soft": `color-mix(in srgb, ${color} 8%, transparent)`,
+          }}
         >
           {habit.emoji}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="font-display font-bold text-[16px] truncate">{habit.name}</span>
+            <span className="font-semibold text-base tracking-[-.2px] text-white truncate">{habit.name}</span>
             <button
               type="button"
               aria-label="excluir hábito"
@@ -57,17 +64,17 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
                   onRemove(habit.id);
                 }
               }}
-              className="ml-auto text-muted-foreground hover:text-destructive leading-none p-1 shrink-0"
+              className="ml-auto text-t4 hover:text-destructive leading-none p-1 shrink-0 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
-          <div className="flex items-center gap-1 mt-0.5">
+          <div className="flex items-center gap-1.5 mt-1">
             <Flame ref={flameScope} width={15} height={15} style={{ color }} className="shrink-0" fill="currentColor" />
-            <span className="font-mono font-bold text-sm" style={{ color }}>
+            <span className="num font-display font-semibold text-lg leading-none" style={{ color }}>
               {streak}
             </span>
-            <span className="text-xs text-muted-foreground">{streakLabel(streak)}</span>
+            <span className="text-xs uppercase tracking-[.1em] text-t3">{streakLabel(streak)}</span>
           </div>
         </div>
 
@@ -76,7 +83,7 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
           aria-label={done ? "marcado como feito hoje" : "marcar como feito hoje"}
           onClick={handleToggle}
           style={done ? { backgroundColor: color, borderColor: color } : undefined}
-          className="relative w-11 h-11 rounded-full border-2 border-border flex items-center justify-center shrink-0 transition-colors duration-250"
+          className="relative w-11 h-11 rounded-full border border-teal-line bg-teal-glass hover:bg-teal/26 flex items-center justify-center shrink-0 transition-colors duration-250"
         >
           <AnimatePresence>
             {done && (
@@ -94,7 +101,7 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
         </button>
       </div>
 
-      <div className="mt-auto pt-3 overflow-hidden">
+      <div className="mt-auto pt-5 overflow-hidden">
         <StreakGrid completedDates={habit.completedDates} weeks={9} cellSize={11} pulseKey={pulseKey} color={color} />
       </div>
     </article>

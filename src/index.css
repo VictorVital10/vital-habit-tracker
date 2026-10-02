@@ -2,21 +2,22 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Dark mode follows the OS setting only — no manual toggle in this app. */
-@custom-variant dark (@media (prefers-color-scheme: dark));
+/* The app is always dark (GenesysMed look), so every `dark:` variant used by
+   the shadcn primitives applies unconditionally, whatever the OS setting. */
+@custom-variant dark (&:where(:root, :root *));
 
 /* ==========================================================================
-   EMBER — design tokens.
-   shadcn's semantic slots (background, foreground, primary, card, border...)
-   are remapped to the Ember "papel quente / brasa" palette below, so every
-   shadcn primitive (Button, Dialog, ...) is Ember-themed out of the box.
-   Two extra tokens (ember-off / ember-hot) cover the streak-grid and
-   flame-icon "brasa" scale, which has no shadcn equivalent.
+   VITAL — design tokens, GenesysMed visual identity.
+   Always dark: deep navy background, teal accent, Playfair Display for
+   headings/numbers and Inter for body text — the same values as the
+   GenesysMed_Rafaelo_VF.html pitch. shadcn's semantic slots (background,
+   primary, card, border...) point at this palette, so every shadcn
+   primitive is themed out of the box.
    ========================================================================== */
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: var(--font-display);
+  --font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -56,63 +57,63 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Ember-only tokens, outside shadcn's semantic vocabulary */
-  --color-ember-off: var(--ember-off);
-  --color-ember-hot: var(--ember-hot);
-  --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  /* GenesysMed tokens, outside shadcn's semantic vocabulary */
+  --color-ink: var(--ink);
+  --color-deep: var(--deep);
+  --color-teal: var(--teal);
+  --color-teal2: var(--teal2);
+  --color-teal3: var(--teal3);
+  --color-teal-glass: var(--teal-glass);
+  --color-teal-line: var(--teal-line);
+  --color-t2: var(--t2);
+  --color-t3: var(--t3);
+  --color-t4: var(--t4);
+  --color-glass: var(--glass);
+  --color-line: var(--line);
+  --color-cell-off: var(--cell-off);
+  --font-display: "Playfair Display", Georgia, serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 :root {
-  --radius: 2px; /* sharp, neobrutalist corners — not shadcn's default 10px */
+  color-scheme: dark;
+  --radius: 12px;
 
-  --background: #f5efe6;
-  --foreground: #241c15;
-  --card: #fffaf2;
-  --card-foreground: #241c15;
-  --popover: #fffaf2;
-  --popover-foreground: #241c15;
-  --primary: #e4572e;
-  --primary-foreground: #fffaf2;
-  --secondary: #e7ddcc;
-  --secondary-foreground: #241c15;
-  --muted: #efe6d8;
-  --muted-foreground: #6b5f4f;
-  --accent: #efe6d8;
-  --accent-foreground: #241c15;
-  --destructive: #b3261e;
-  --border: #241c15;
-  --input: #241c15;
-  --ring: #e4572e;
+  --ink: #06111b;
+  --deep: #0a1a2e;
+  --teal: #00b4cc;
+  --teal2: #26c8dc;
+  --teal3: #80deea;
+  --teal-glass: rgba(0, 180, 204, 0.14);
+  --teal-line: rgba(0, 180, 204, 0.28);
+  /* text hierarchy — never below .56 opacity on the dark background */
+  --t2: rgba(255, 255, 255, 0.8);
+  --t3: rgba(255, 255, 255, 0.68);
+  --t4: rgba(255, 255, 255, 0.56);
+  --glass: rgba(255, 255, 255, 0.045);
+  --line: rgba(255, 255, 255, 0.09);
 
-  --ember-off: #e7ddcc;
-  --ember-hot: #ff5a1f;
-}
+  --background: var(--ink);
+  --foreground: #ffffff;
+  --card: var(--glass);
+  --card-foreground: #ffffff;
+  --popover: var(--deep);
+  --popover-foreground: #ffffff;
+  --primary: var(--teal);
+  --primary-foreground: var(--ink);
+  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary-foreground: var(--t2);
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: var(--t4);
+  --accent: var(--teal-glass);
+  --accent-foreground: var(--teal);
+  --destructive: #ff6b6b;
+  --border: var(--line);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: var(--teal);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1b1712;
-    --foreground: #f3e9da;
-    --card: #241f18;
-    --card-foreground: #f3e9da;
-    --popover: #241f18;
-    --popover-foreground: #f3e9da;
-    --primary: #e4572e;
-    --primary-foreground: #1b1712;
-    --secondary: #33291d;
-    --secondary-foreground: #f3e9da;
-    --muted: #2a2420;
-    --muted-foreground: #b6a992;
-    --accent: #33291d;
-    --accent-foreground: #f3e9da;
-    --destructive: #b3261e;
-    --border: #f3e9da;
-    --input: #f3e9da;
-    --ring: #e4572e;
-
-    --ember-off: #2a2420;
-    --ember-hot: #ff8c42;
-  }
+  /* empty cell in the streak grid */
+  --cell-off: rgba(255, 255, 255, 0.06);
 }
 
 html,
@@ -123,8 +124,17 @@ body,
 
 body {
   margin: 0;
-  background: var(--background);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  /* same sky as the pitch's opening slide: two radial glows over the ink */
+  background:
+    radial-gradient(ellipse at 68% 0%, rgba(0, 119, 168, 0.28) 0%, transparent 54%),
+    radial-gradient(ellipse at 16% 78%, rgba(0, 180, 204, 0.12) 0%, transparent 50%),
+    var(--ink);
+  background-attachment: fixed;
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
   padding-bottom: env(safe-area-inset-bottom);
@@ -134,6 +144,16 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+  :focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+}
+
+/* Playfair numbers with lining + tabular figures, as in the pitch */
+.num {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum", "tnum";
 }
 
 /* Framer Motion animations are gated in JS via useReducedMotion(); this

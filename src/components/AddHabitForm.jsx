@@ -29,14 +29,14 @@ export function AddHabitForm({ open, onOpenChange, onSubmit }) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="border-t-2 border-border rounded-t-2xl">
+      <SheetContent side="bottom" className="border-t border-teal-line rounded-t-[20px] bg-deep">
         <SheetHeader>
-          <SheetTitle className="font-display text-xl">novo hábito</SheetTitle>
+          <SheetTitle className="font-display text-2xl font-semibold tracking-[-.5px]">Novo <em className="not-italic text-teal">hábito</em></SheetTitle>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 px-4 pb-4">
           <div className="flex gap-3">
             <div className="flex flex-col gap-1">
-              <Label htmlFor="habitEmoji" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Label htmlFor="habitEmoji" className="text-xs font-semibold uppercase tracking-[.14em] text-teal">
                 emoji
               </Label>
               <input
@@ -47,11 +47,11 @@ export function AddHabitForm({ open, onOpenChange, onSubmit }) {
                 autoComplete="off"
                 value={emoji}
                 onChange={(e) => setEmoji(e.target.value)}
-                className="w-16 text-center border-2 border-border rounded-sm bg-background px-3 py-2.5 text-base focus:outline-2 focus:outline-ring focus:outline-offset-1"
+                className="w-16 text-center border border-input rounded-[12px] bg-white/4 px-3 py-2.5 text-base text-white placeholder:text-t4 transition-colors focus:border-teal-line focus:bg-teal/8 focus:outline-2 focus:outline-ring focus:outline-offset-1"
               />
             </div>
             <div className="flex flex-col gap-1 flex-1">
-              <Label htmlFor="habitName" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Label htmlFor="habitName" className="text-xs font-semibold uppercase tracking-[.14em] text-teal">
                 nome
               </Label>
               <input
@@ -64,13 +64,13 @@ export function AddHabitForm({ open, onOpenChange, onSubmit }) {
                 autoComplete="off"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="border-2 border-border rounded-sm bg-background px-3 py-2.5 text-base focus:outline-2 focus:outline-ring focus:outline-offset-1"
+                className="border border-input rounded-[12px] bg-white/4 px-3 py-2.5 text-base text-white placeholder:text-t4 transition-colors focus:border-teal-line focus:bg-teal/8 focus:outline-2 focus:outline-ring focus:outline-offset-1"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground">cor</Label>
+            <Label className="text-xs font-semibold uppercase tracking-[.14em] text-teal">cor</Label>
             <div className="flex flex-wrap gap-2.5" role="radiogroup" aria-label="cor do hábito">
               {HABIT_COLORS.map((c) => (
                 <button
@@ -83,7 +83,7 @@ export function AddHabitForm({ open, onOpenChange, onSubmit }) {
                   style={{ backgroundColor: c.hex }}
                   className={`w-8 h-8 rounded-full border-2 transition-transform ${
                     color === c.hex
-                      ? "border-foreground scale-110"
+                      ? "border-white scale-110 shadow-[0_0_0_4px_rgba(0,180,204,.12)]"
                       : "border-transparent hover:scale-105"
                   }`}
                 />
@@ -92,10 +92,10 @@ export function AddHabitForm({ open, onOpenChange, onSubmit }) {
           </div>
 
           <div className="flex justify-end gap-2.5 mt-1.5">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              cancelar
+            <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+              Cancelar
             </Button>
-            <Button type="submit">acender</Button>
+            <Button type="submit">Criar</Button>
           </div>
         </form>
       </SheetContent>
