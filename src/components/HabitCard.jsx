@@ -3,11 +3,17 @@ import { AnimatePresence, motion, useAnimate, useReducedMotion } from "framer-mo
 import { Check, Flame, X } from "lucide-react";
 import { currentStreak, streakLabel } from "@/lib/habits";
 import { habitColor } from "@/lib/colors";
+import { pillarOf } from "@/lib/pillars";
+import { habitGoal, weekCount } from "@/lib/stats";
 import { StreakGrid } from "@/components/StreakGrid";
 
 export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
   const streak = currentStreak(habit.completedDates);
   const color = habitColor(habit);
+  const pillar = pillarOf(habit);
+  const PillarIcon = pillar.icon;
+  const goal = habitGoal(habit);
+  const week = weekCount(habit.completedDates);
   const [pulseKey, setPulseKey] = useState(0);
   const [flameScope, animateFlame] = useAnimate();
   const reducedMotion = useReducedMotion();
@@ -53,8 +59,8 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="font-semibold text-base tracking-[-.2px] text-white truncate">{habit.name}</span>
+          <div className="flex items-start gap-1.5">
+            <span className="font-semibold text-base leading-snug tracking-[-.2px] text-white line-clamp-2 break-words">{habit.name}</span>
             <button
               type="button"
               aria-label="excluir hábito"
@@ -74,7 +80,7 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
             <span className="num font-display font-semibold text-lg leading-none" style={{ color }}>
               {streak}
             </span>
-            <span className="text-xs uppercase tracking-[.1em] text-t3">{streakLabel(streak)}</span>
+            <span className="text-xs text-t3 whitespace-nowrap">{streakLabel(streak)}</span>
           </div>
         </div>
 
@@ -101,7 +107,17 @@ export function HabitCard({ habit, done, onToggleToday, onRemove, onOpen }) {
         </button>
       </div>
 
-      <div className="mt-auto pt-5 overflow-hidden">
+      <div className="flex items-center justify-between gap-2 mt-4">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-teal-line bg-teal-glass text-[11px] font-semibold tracking-[.04em] text-teal2">
+          <PillarIcon className="size-3.5" strokeWidth={2} />
+          {pillar.name}
+        </span>
+        <span className="text-xs text-t3 whitespace-nowrap">
+          <span className="num font-semibold text-white">{week}</span>/{goal} nesta semana
+        </span>
+      </div>
+
+      <div className="mt-auto pt-4 overflow-hidden">
         <StreakGrid completedDates={habit.completedDates} weeks={9} cellSize={11} pulseKey={pulseKey} color={color} />
       </div>
     </article>

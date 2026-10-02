@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { loadHabits, saveHabits } from "@/lib/storage";
 import { todayKey, uid } from "@/lib/habits";
 import { DEFAULT_HABIT_COLOR } from "@/lib/colors";
+import { DEFAULT_GOAL } from "@/lib/stats";
 
 export function useHabits() {
   const [habits, setHabits] = useState(loadHabits);
@@ -10,12 +11,14 @@ export function useHabits() {
     saveHabits(habits);
   }, [habits]);
 
-  function addHabit(name, emoji, color = DEFAULT_HABIT_COLOR) {
+  function addHabit({ name, emoji = "", color = DEFAULT_HABIT_COLOR, pillar = "geral", goal = DEFAULT_GOAL }) {
     const habit = {
       id: uid(),
       name: name.trim(),
-      emoji: emoji.trim() || "🔥",
+      emoji: emoji.trim() || "✨",
       color,
+      pillar,
+      goal,
       createdAt: todayKey(),
       completedDates: [],
     };
@@ -26,25 +29,29 @@ export function useHabits() {
     setHabits((prev) => prev.filter((h) => h.id !== id));
   }
 
-  function toggleToday(id) {
-    const today = todayKey();
+  /** Marks/unmarks any past day (used by the history grid in the modal). */
+  function toggleDate(id, date) {
     setHabits((prev) =>
       prev.map((h) => {
         if (h.id !== id) return h;
         const set = new Set(h.completedDates);
-        if (set.has(today)) {
-          set.delete(today);
+        if (set.has(date)) {
+          set.delete(date);
         } else {
-          set.add(today);
+          set.add(date);
         }
         return { ...h, completedDates: [...set].sort() };
       })
     );
   }
 
+  function toggleToday(id) {
+    toggleDate(id, todayKey());
+  }
+
   function isDoneToday(habit) {
     return habit.completedDates.includes(todayKey());
   }
 
-  return { habits, addHabit, removeHabit, toggleToday, isDoneToday };
+  return { habits, addHabit, removeHabit, toggleToday, toggleDate, isDoneToday };
 }

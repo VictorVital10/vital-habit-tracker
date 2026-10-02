@@ -1,76 +1,101 @@
 import { useState } from "react";
-import { Header } from "@/components/Header";
-import { HabitCard } from "@/components/HabitCard";
+import { Header, SideDots } from "@/components/Header";
+import { TodayHero } from "@/components/TodayHero";
+import { HabitsSection } from "@/components/HabitsSection";
+import { ProgressSection } from "@/components/ProgressSection";
+import { AchievementsSection } from "@/components/AchievementsSection";
+import { ExploreSection } from "@/components/ExploreSection";
+import { GuideSection } from "@/components/GuideSection";
+import { ClosingSection } from "@/components/ClosingSection";
 import { HabitModal } from "@/components/HabitModal";
 import { AddHabitForm } from "@/components/AddHabitForm";
-import { EmptyState } from "@/components/EmptyState";
+import { MilestoneDialog } from "@/components/MilestoneDialog";
 import { useHabits } from "@/hooks/useHabits";
-import { currentStreak } from "@/lib/habits";
+import { scrollToSection, useScrollSpy } from "@/hooks/useScrollSpy";
+import { currentStreak, todayKey } from "@/lib/habits";
+import { PILLARS } from "@/lib/pillars";
+import { MILESTONES } from "@/lib/stats";
 
-function Kpi({ value, label }) {
-  return (
-    <div className="py-[18px] px-5 text-center">
-      <div className="num font-display text-[30px] font-semibold text-teal leading-none">{value}</div>
-      <div className="text-xs text-t3 mt-1.5 uppercase tracking-[.1em]">{label}</div>
-    </div>
-  );
-}
+const SECTIONS = [
+  { id: "hoje", label: "Hoje" },
+  { id: "habitos", label: "Hábitos" },
+  { id: "progresso", label: "Progresso" },
+  { id: "conquistas", label: "Conquistas" },
+  { id: "explorar", label: "Explorar" },
+  { id: "guia", label: "Como funciona" },
+];
+const SECTION_IDS = SECTIONS.map((s) => s.id);
 
 export default function App() {
-  const { habits, addHabit, removeHabit, toggleToday, isDoneToday } = useHabits();
+  const { habits, addHabit, removeHabit, toggleToday, toggleDate, isDoneToday } = useHabits();
   const [addOpen, setAddOpen] = useState(false);
   const [openHabitId, setOpenHabitId] = useState(null);
+  const [milestone, setMilestone] = useState(null);
+  const active = useScrollSpy(SECTION_IDS);
 
   const openHabit = habits.find((h) => h.id === openHabitId) ?? null;
   const doneToday = habits.filter(isDoneToday).length;
   const longestLive = habits.reduce((max, h) => Math.max(max, currentStreak(h.completedDates)), 0);
 
+  // Marking today can land a streak exactly on a milestone: celebrate it,
+  // after a beat so the check-mark animation is seen first.
+  function handleToggleToday(id) {
+    const habit = habits.find((h) => h.id === id);
+    if (habit && !isDoneToday(habit)) {
+      const streak = currentStreak([...habit.completedDates, todayKey()]);
+      if (MILESTONES.includes(streak)) {
+        setTimeout(() => setMilestone({ habit, days: streak }), 650);
+      }
+    }
+    toggleToday(id);
+  }
+
+  function addTemplate(t) {
+    const color = PILLARS.find((p) => p.id === t.pillar)?.color;
+    addHabit({ ...t, color });
+  }
+
   return (
     <div className="min-h-dvh text-foreground">
-      <Header onAddHabit={() => setAddOpen(true)} />
+      <Header
+        sections={SECTIONS}
+        active={active}
+        onNavigate={scrollToSection}
+        onAddHabit={() => setAddOpen(true)}
+      />
+      <SideDots sections={SECTIONS} active={active} onNavigate={scrollToSection} />
 
-      <main className="max-w-[1080px] mx-auto px-5 pt-10 pb-14 min-[801px]:px-14 min-[801px]:pt-12 min-[801px]:pb-16">
-        {/* section intro — same anatomy as the pitch slides */}
-        <div className="inline-flex items-center gap-2 mb-4">
-          <div className="w-1.5 h-1.5 rounded-full bg-teal shrink-0" />
-          <span className="text-xs font-semibold uppercase tracking-[.18em] text-teal">Seus hábitos</span>
-        </div>
-        <h1 className="font-display text-[clamp(30px,3.8vw,48px)] font-semibold leading-[1.1] tracking-[-1px] text-white mb-2">
-          Sua saúde, <em className="not-italic text-teal">um dia</em> de cada vez
-        </h1>
-        <div className="w-12 h-0.5 bg-teal rounded-full mt-4 mb-6" />
-        <p className="text-base min-[801px]:text-[17px] text-t3 leading-[1.7] max-w-[620px] mb-8">
-          Pequenos hábitos constroem grandes resultados. Marque o que fez hoje e veja sua sequência crescer, quadrado a quadrado.
-        </p>
-
-        {habits.length > 0 && (
-          <div className="grid grid-cols-1 min-[481px]:grid-cols-3 mb-4 bg-teal/8 border border-teal-line rounded-[14px] overflow-hidden divide-y min-[481px]:divide-y-0 min-[481px]:divide-x divide-teal/20">
-            <Kpi value={habits.length} label={habits.length === 1 ? "hábito ativo" : "hábitos ativos"} />
-            <Kpi value={`${doneToday}/${habits.length}`} label="feitos hoje" />
-            <Kpi value={longestLive} label="maior sequência" />
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-          {habits.length === 0 ? (
-            <EmptyState />
-          ) : (
-            habits.map((habit) => (
-              <HabitCard
-                key={habit.id}
-                habit={habit}
-                done={isDoneToday(habit)}
-                onToggleToday={toggleToday}
-                onRemove={removeHabit}
-                onOpen={setOpenHabitId}
-              />
-            ))
-          )}
-        </div>
+      <main>
+        <TodayHero
+          habits={habits}
+          doneToday={doneToday}
+          longestLive={longestLive}
+          onAddHabit={() => setAddOpen(true)}
+          onExplore={() => scrollToSection("explorar")}
+        />
+        <HabitsSection
+          habits={habits}
+          isDoneToday={isDoneToday}
+          onToggleToday={handleToggleToday}
+          onRemove={removeHabit}
+          onOpen={setOpenHabitId}
+          onExplore={() => scrollToSection("explorar")}
+        />
+        <ProgressSection habits={habits} />
+        <AchievementsSection habits={habits} />
+        <ExploreSection habits={habits} onAddTemplate={addTemplate} onAddHabit={() => setAddOpen(true)} />
+        <GuideSection />
+        <ClosingSection onAddHabit={() => setAddOpen(true)} />
       </main>
 
       <AddHabitForm open={addOpen} onOpenChange={setAddOpen} onSubmit={addHabit} />
-      <HabitModal habit={openHabit} open={!!openHabit} onOpenChange={(v) => !v && setOpenHabitId(null)} />
+      <HabitModal
+        habit={openHabit}
+        open={!!openHabit}
+        onOpenChange={(v) => !v && setOpenHabitId(null)}
+        onToggleDate={toggleDate}
+      />
+      <MilestoneDialog milestone={milestone} onClose={() => setMilestone(null)} />
     </div>
   );
 }

@@ -156,6 +156,48 @@ body {
   font-feature-settings: "lnum", "tnum";
 }
 
+/* slow spin of the hero's orbit ring (the pitch's rotate-slow) */
+@theme {
+  --animate-orbit: orbit 24s linear infinite;
+  @keyframes orbit {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* PDF report (Header "PDF" button -> window.print): keep the dark look,
+   hide navigation/actions, and show everything that is normally revealed
+   on scroll (framer-motion leaves unseen blocks at opacity 0). */
+@media print {
+  @page {
+    margin: 0;
+  }
+  html,
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: var(--ink) !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  [style*="opacity"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .bar-fill {
+    width: var(--w) !important;
+  }
+  .bar-fill span {
+    opacity: 1 !important;
+  }
+  article,
+  section > div > div {
+    break-inside: avoid;
+  }
+}
+
 /* Framer Motion animations are gated in JS via useReducedMotion(); this
    covers the CSS-driven ones (Radix/tw-animate-css sheet transitions,
    plain Tailwind transition-colors, etc). */
